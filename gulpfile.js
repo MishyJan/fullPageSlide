@@ -13,6 +13,8 @@ var uglify = require('gulp-uglify');
 var rename = require('gulp-rename');
 // 获取CSS压缩模块
 var minifyCss = require('gulp-clean-css');
+// 获取热加载browser-sync
+var browserSync = require('browser-sync').create();
 
 // Link任务会检查 js/ 目录下得js文件有没有报错或警告
 gulp.task('lint', function() {
@@ -54,9 +56,17 @@ gulp.task('css', function() {
 // 在命令行使用 gulp auto 启动此任务
 gulp.task('auto', function() {
     // 监听文件修改，当文件被修改则执行 less 任务
-    gulp.watch('less/**.less', ['less']);
+    gulp.watch('less/**.less', ['less', 'server']);
     gulp.watch(['./index.html', './package.json', './css/fullpageslide.css'], ['copy']);
 })
+
+gulp.task('browser-sync', function() {
+    browserSync.init({
+        server: {
+            baseDir: "./examples/"
+        }
+    });
+});
 
 // 复制文件到dist目录
 gulp.task('copy', function() {
@@ -66,4 +76,4 @@ gulp.task('copy', function() {
 
 // 使用 gulp.task('default') 定义默认任务
 // 在命令行使用 gulp 启动 less 任务和 auto 任务
-gulp.task('default', ['lint', 'less', 'auto', 'css', 'js', 'copy'])
+gulp.task('default', ['lint', 'less', 'auto', 'css', 'js', 'browser-sync', 'copy'])
